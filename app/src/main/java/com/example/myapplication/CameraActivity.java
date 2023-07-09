@@ -7,9 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
-import android.graphics.YuvImage;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -18,8 +16,6 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.params.OutputConfiguration;
-import android.hardware.camera2.params.SessionConfiguration;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
@@ -225,8 +221,8 @@ public class CameraActivity extends AppCompatActivity {
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                             if (bitmap != null) {
                                 processImage(bitmap);
-                                //finish();
-                                sendImage(bitmap);
+                                finish();
+                                //endImage(bitmap);
 
 
                             }
@@ -409,10 +405,8 @@ public class CameraActivity extends AppCompatActivity {
     }
     private void processImage(Bitmap bitmap) {
         InputImage image = InputImage.fromBitmap(bitmap, 0);
-
         TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
         recognizer.process(image)
-
                 .addOnSuccessListener(visionText -> {
                     if (!visionText.getText().isEmpty()) {
                         Toast.makeText(CameraActivity.this, visionText.getText(), Toast.LENGTH_SHORT).show();
