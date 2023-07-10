@@ -26,10 +26,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
+import okhttp3.*;
 
 import android.view.TextureView;
 
@@ -229,15 +231,20 @@ public class CameraActivity extends AppCompatActivity {
                             byte[] bytes = new byte[buffer.capacity()];
                             buffer.get(bytes);
                             save(bytes);
+                            String imageEncoded = convertImageToBase64(bytes);
+
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            sendImageToServer(imageEncoded);
                             //boolean colorMatch = isColorWithinRectangle(targetColor, bitmap);
                             if (bitmap != null) {
                                 boolean colorMatchLeftRectangle = isColorWithinRectangleLeftRectangle(targetColor, bitmap);
                                 boolean colorMatchRightRectangle = isColorWithinRectangleRightRectangle(targetColor, bitmap);
+
                                 if (colorMatchRightRectangle && colorMatchLeftRectangle){
 
                                     Toast.makeText(CameraActivity.this, "colorMatch", Toast.LENGTH_SHORT).show();
                                     processImage(bitmap);
+
                                     finish();
                                 }
                                 else{
@@ -509,5 +516,37 @@ public class CameraActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+    public String convertImageToBase64(byte[] bytes) {
+
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+    public void sendImageToServer(String base64Image) {
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{ \"image\": \"" + base64Image + "\" }");
+        Request request = new Request.Builder()
+                .url("https://reqres.in/api/")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                if (!response.isSuccessful()) {
+                    Log.e("response","nose envio");
+                    throw new IOException("Unexpected code " + response);
+
+                }
+                // Do something with the response.
+            }
+        });
     }
 }
