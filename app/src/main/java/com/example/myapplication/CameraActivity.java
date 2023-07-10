@@ -32,7 +32,9 @@ import android.view.Surface;
 
 import android.view.TextureView;
 
+import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -64,6 +66,9 @@ public class CameraActivity extends AppCompatActivity {
     private Button btnTake;
     private Button btnGallery;
     private TextureView textureView;
+    private View overlayView;
+
+
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
     static {
@@ -91,6 +96,8 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         textureView = findViewById(R.id.textView);
+        overlayView = findViewById(R.id.overlayView1);
+
         if (textureView != null)
             textureView.setSurfaceTextureListener(textureListener);
         btnTake = findViewById(R.id.buttonCamera2);
@@ -323,6 +330,9 @@ public class CameraActivity extends AppCompatActivity {
             assert texture != null;
             texture.setDefaultBufferSize(imageDimension.getWidth(), imageDimension.getHeight());
             Surface surface = new Surface(texture);
+            //View overlayView = findViewById(R.id.overlayView1);
+            overlayView.setAlpha(0.5f); // Set the opacity to darken the overlay
+
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
             cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback(){

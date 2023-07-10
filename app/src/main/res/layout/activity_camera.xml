@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <TextureView
         android:id="@+id/textView"
-        android:layout_weight="14"
-        android:layout_height="0dp"
-        android:layout_width="match_parent"/>
-
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <Button
         android:id="@+id/buttonCamera2"
         android:layout_width="100dp"
@@ -20,8 +15,19 @@
         android:backgroundTint="#2a9df4"
         android:text="Take a Photo" />
 
+    <View
+        android:id="@+id/overlayView1"
+        android:layout_width="80dp"
+    android:layout_height="20dp"
+    android:layout_gravity="center"
+        android:layout_marginLeft="-100dp"
+        android:layout_marginTop="-100dp"
+
+    android:background="#80000000" /> <!-- Set the background color with transparency -->
+
+    <!-- Add other views or buttons as needed -->
+
+</FrameLayout>
 
 
 
-
-</LinearLayout>
