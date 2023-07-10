@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -90,6 +91,7 @@ public class CameraActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
+    int targetColor = Color.BLACK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,9 +228,20 @@ public class CameraActivity extends AppCompatActivity {
                             buffer.get(bytes);
                             save(bytes);
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            //boolean colorMatch = isColorWithinRectangle(targetColor, bitmap);
                             if (bitmap != null) {
-                                processImage(bitmap);
-                                finish();
+                                boolean colorMatch = isColorWithinRectangle(targetColor, bitmap);
+                                if (colorMatch){
+                                    Toast.makeText(CameraActivity.this, "colorMatch", Toast.LENGTH_SHORT).show();
+                                    processImage(bitmap);
+                                    finish();
+                                }
+                                else{
+                                    Toast.makeText(CameraActivity.this, "Cuadrar Bien la imagen", Toast.LENGTH_SHORT).show();
+
+                                }
+
+
                                 //endImage(bitmap);
 
 
@@ -419,7 +432,9 @@ public class CameraActivity extends AppCompatActivity {
         recognizer.process(image)
                 .addOnSuccessListener(visionText -> {
                     if (!visionText.getText().isEmpty()) {
-                        Toast.makeText(CameraActivity.this, visionText.getText(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(CameraActivity.this, visionText.getText(), Toast.LENGTH_SHORT).show();
+                        System.out.println(visionText.getText());
+                        Log.e("Texto",visionText.getText());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -429,6 +444,24 @@ public class CameraActivity extends AppCompatActivity {
                     }
                 });
     }
+    private boolean isColorWithinRectangle(int targetColor, Bitmap bitmap) {
+        int left = overlayView.getLeft();
+        int top = overlayView.getTop();
+        int right = overlayView.getRight();
+        int bottom = overlayView.getBottom();
 
+        // Capture a new frame from the camera feed
+
+
+        for (int x = left; x < right; x++) {
+            for (int y = top; y < bottom; y++) {
+                int pixelColor = bitmap.getPixel(x, y);
+                if (pixelColor == targetColor) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 }

@@ -6,24 +6,34 @@
     <TextureView
         android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="650dp" />
+
     <Button
         android:id="@+id/buttonCamera2"
         android:layout_width="100dp"
         android:layout_height="60dp"
 
         android:backgroundTint="#2a9df4"
-        android:text="Take a Photo" />
+        android:text="Take a Photo"
+        android:layout_gravity="bottom|center"/>
 
     <View
         android:id="@+id/overlayView1"
         android:layout_width="80dp"
-    android:layout_height="20dp"
-    android:layout_gravity="center"
-        android:layout_marginLeft="-100dp"
-        android:layout_marginTop="-100dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="-150dp"
+        android:layout_marginTop="-300dp"
+        android:background="#80000000" />
 
-    android:background="#80000000" /> <!-- Set the background color with transparency -->
+    <View
+        android:id="@+id/overlayView2"
+        android:layout_width="80dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="-300dp"
+        android:background="#80000000" />
 
     <!-- Add other views or buttons as needed -->
 
