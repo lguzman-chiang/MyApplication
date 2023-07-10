@@ -6,7 +6,7 @@
     <TextureView
         android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="600dp" />
 
     <Button
         android:id="@+id/buttonCamera2"
@@ -19,8 +19,8 @@
 
     <View
         android:id="@+id/overlayView1"
-        android:layout_width="80dp"
-        android:layout_height="20dp"
+        android:layout_width="40dp"
+        android:layout_height="5dp"
         android:layout_gravity="center"
         android:layout_marginLeft="-150dp"
         android:layout_marginTop="-300dp"
@@ -28,8 +28,8 @@
 
     <View
         android:id="@+id/overlayView2"
-        android:layout_width="80dp"
-        android:layout_height="20dp"
+        android:layout_width="20dp"
+        android:layout_height="5dp"
         android:layout_gravity="center"
         android:layout_marginLeft="150dp"
         android:layout_marginTop="-300dp"

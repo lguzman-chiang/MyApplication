@@ -68,6 +68,7 @@ public class CameraActivity extends AppCompatActivity {
     private Button btnGallery;
     private TextureView textureView;
     private View overlayView;
+    private View overlayView2;
 
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
@@ -99,6 +100,7 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
         textureView = findViewById(R.id.textView);
         overlayView = findViewById(R.id.overlayView1);
+        overlayView2 = findViewById(R.id.overlayView2);
 
         if (textureView != null)
             textureView.setSurfaceTextureListener(textureListener);
@@ -230,8 +232,10 @@ public class CameraActivity extends AppCompatActivity {
                             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                             //boolean colorMatch = isColorWithinRectangle(targetColor, bitmap);
                             if (bitmap != null) {
-                                boolean colorMatch = isColorWithinRectangle(targetColor, bitmap);
-                                if (colorMatch){
+                                boolean colorMatchLeftRectangle = isColorWithinRectangleLeftRectangle(targetColor, bitmap);
+                                boolean colorMatchRightRectangle = isColorWithinRectangleRightRectangle(targetColor, bitmap);
+                                if (colorMatchRightRectangle && colorMatchLeftRectangle){
+
                                     Toast.makeText(CameraActivity.this, "colorMatch", Toast.LENGTH_SHORT).show();
                                     processImage(bitmap);
                                     finish();
@@ -300,16 +304,16 @@ public class CameraActivity extends AppCompatActivity {
             }
         }
     }
-    private void sendImage(Bitmap bitmap) {
-        Intent resultIntent = new Intent(getApplicationContext(), MainActivity2.class);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        resultIntent.putExtra("data", byteArray);
-        startActivity(resultIntent);
-        setResult(RESULT_OK, resultIntent);
-
-    }
+//    private void sendImage(Bitmap bitmap) {
+//        Intent resultIntent = new Intent(getApplicationContext(), MainActivity2.class);
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//        byte[] byteArray = stream.toByteArray();
+//        resultIntent.putExtra("data", byteArray);
+//        startActivity(resultIntent);
+//        setResult(RESULT_OK, resultIntent);
+//
+//    }
     private static boolean isExternalStorageReadOnly(){
         String extStorageState = Environment.getExternalStorageState();
         if(Environment.MEDIA_MOUNTED_READ_ONLY.equals(extStorageState)) {
@@ -345,7 +349,7 @@ public class CameraActivity extends AppCompatActivity {
             Surface surface = new Surface(texture);
             //View overlayView = findViewById(R.id.overlayView1);
             overlayView.setAlpha(0.5f); // Set the opacity to darken the overlay
-
+            overlayView2.setAlpha(0.5f);
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
             cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback(){
@@ -434,7 +438,7 @@ public class CameraActivity extends AppCompatActivity {
                     if (!visionText.getText().isEmpty()) {
                         //Toast.makeText(CameraActivity.this, visionText.getText(), Toast.LENGTH_SHORT).show();
                         System.out.println(visionText.getText());
-                        Log.e("Texto",visionText.getText());
+                        Log.e("Text",visionText.getText());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -444,11 +448,42 @@ public class CameraActivity extends AppCompatActivity {
                     }
                 });
     }
-    private boolean isColorWithinRectangle(int targetColor, Bitmap bitmap) {
-        int left = overlayView.getLeft();
-        int top = overlayView.getTop();
-        int right = overlayView.getRight();
-        int bottom = overlayView.getBottom();
+    private boolean isColorWithinRectangleLeftRectangle(int targetColor, Bitmap bitmap) {
+        int left = overlayView.getLeft() ;
+        int top = overlayView.getTop() + 350  ;
+        int right = overlayView.getRight() +50;
+        int bottom = overlayView.getBottom() + 350 ;
+
+        // Capture a new frame from the camera feed
+        for (int x = left; x < right; x++) {
+            for (int y = top; y < bottom; y++) {
+                int pixelColor = bitmap.getPixel(x, y);
+
+                // Extract the RGB components of the pixel color
+                int red = Color.red(pixelColor);
+                int green = Color.green(pixelColor);
+                int blue = Color.blue(pixelColor);
+
+                // Convert RGB to grayscale using the formula: grayscale = (0.299 * R) + (0.587 * G) + (0.114 * B)
+                int grayscale = (int) (0.299 * red + 0.587 * green + 0.114 * blue);
+
+                // Define the lower and upper thresholds for the dark gray and black range
+                int lowerThreshold = 0;    // Lower threshold for black
+                int upperThreshold = 32;  // Upper threshold for gray
+
+                // Check if the grayscale value is within the defined range
+                if (grayscale >= lowerThreshold && grayscale <= upperThreshold) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private boolean isColorWithinRectangleRightRectangle(int targetColor, Bitmap bitmap) {
+        int left = overlayView2.getLeft() + 1700;
+        int top = overlayView2.getTop() + 350  ;
+        int right = overlayView2.getRight() +1750;
+        int bottom = overlayView2.getBottom() + 350 ;
 
         // Capture a new frame from the camera feed
         for (int x = left; x < right; x++) {
