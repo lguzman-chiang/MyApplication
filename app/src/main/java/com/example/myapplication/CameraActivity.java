@@ -451,17 +451,28 @@ public class CameraActivity extends AppCompatActivity {
         int bottom = overlayView.getBottom();
 
         // Capture a new frame from the camera feed
-
-
         for (int x = left; x < right; x++) {
             for (int y = top; y < bottom; y++) {
                 int pixelColor = bitmap.getPixel(x, y);
-                if (pixelColor == targetColor) {
+
+                // Extract the RGB components of the pixel color
+                int red = Color.red(pixelColor);
+                int green = Color.green(pixelColor);
+                int blue = Color.blue(pixelColor);
+
+                // Convert RGB to grayscale using the formula: grayscale = (0.299 * R) + (0.587 * G) + (0.114 * B)
+                int grayscale = (int) (0.299 * red + 0.587 * green + 0.114 * blue);
+
+                // Define the lower and upper thresholds for the dark gray and black range
+                int lowerThreshold = 0;    // Lower threshold for black
+                int upperThreshold = 32;  // Upper threshold for gray
+
+                // Check if the grayscale value is within the defined range
+                if (grayscale >= lowerThreshold && grayscale <= upperThreshold) {
                     return true;
                 }
             }
         }
         return false;
     }
-
 }
